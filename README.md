@@ -25,8 +25,9 @@ One the first usage, pws will prompt you to create the encrypted master file. Th
 You can add a new account profile to the master file:  
 `pws.py --new-profile profile-name`  
 
-The above will prompt you to input the username and password. Instead of typing one manually, it is better to use the password generator:  
-`pws.py --new-profile profile-name --password-length 16` 
+The above will autogenerate a random password of length 16 (guaranteed to have at least one digit, lowercase, uppercase, and special character). If you wish to change the password length, you can just pass the `--password-length` argument:  
+`pws.py --new-profile profile-name --password-length 24`  
+If you want to manually type a password in, use `--password-length 0`.
 
 Removing profiles:  
 `pws.py --remove-profile profile-name`

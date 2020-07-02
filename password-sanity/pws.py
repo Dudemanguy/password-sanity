@@ -13,7 +13,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--field", choices=["password", "username"], default="password",
                     help="Select which key field to obtain with --get-profile. Defaults to 'password'.\n")
 parser.add_argument("--get-profile", help="Retrieve account information from a profile and store in clipboard.\n")
-parser.add_argument("--password-length", type=int, help="Generate password of length x when creating a new profile.\n")
+parser.add_argument("--password-length", default=16, type=int, 
+                     help="Generate password of length x when creating a new profile.\n")
 parser.add_argument("--new-master", action="store_true", help="Create a new, encrypted master file.")
 parser.add_argument("--new-profile", help="Add a new account profile to the encrypted master file.")
 parser.add_argument("--remove-profile", help="Remove a stored profile from the encrypted master file.")
@@ -44,7 +45,7 @@ def create_new_profile(gpg, key, profile, length, path):
         if confirm != "yes":
             sys.exit("Quitting.")
     username = input("Input username for this profile.\n")
-    if length == None:
+    if length == 0:
         password = getpass.getpass(prompt="Input the password for this profile.\n")
     else:
         password = generate_password(length)
