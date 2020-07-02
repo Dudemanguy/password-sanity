@@ -4,6 +4,8 @@ import getpass
 import gnupg
 import json
 import os
+import random
+import string
 import sys
 from pathlib import Path
 
@@ -11,6 +13,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--field", choices=["password", "username"], default="password",
                     help="Select which key field to obtain with --get-profile. Defaults to 'password'.\n")
 parser.add_argument("--get-profile", help="Retrieve account information from a profile and store in clipboard.\n")
+parser.add_argument("--password-length", type=int, help="Generate password of length x when creating a new profile.\n")
 parser.add_argument("--new-master", action="store_true", help="Create a new, encrypted master file.")
 parser.add_argument("--new-profile", help="Add a new account profile to the encrypted master file.")
 parser.add_argument("--remove-profile", help="Remove a stored profile from the encrypted master file.")
@@ -32,7 +35,7 @@ def create_new_encrypted_master(gpg, key, path):
     if not encrypt.ok:
         sys.exit("Encryption failed! Please check that you inputted a valid email in the config.")
 
-def create_new_profile(gpg, key, profile, path):
+def create_new_profile(gpg, key, profile, length, path):
     decrypt = decrypt_master(gpg, key, path)
     master = json.loads(str(decrypt))
     if profile in master:
@@ -41,7 +44,10 @@ def create_new_profile(gpg, key, profile, path):
         if confirm != "yes":
             sys.exit("Quitting.")
     username = input("Input username for this profile.\n")
-    password = getpass.getpass(prompt="Input the password for this profile.\n")
+    if length == None:
+        password = getpass.getpass(prompt="Input the password for this profile.\n")
+    else:
+        password = generate_password(length)
     master[profile] = {"username" : username, "password": password}
     encrypt = gpg.encrypt(json.dumps(master).encode("utf-8"), key, output=str(path))
     if not encrypt.ok:
@@ -53,6 +59,25 @@ def decrypt_master(gpg, key, path):
     if not decrypt.ok:
         sys.exit("Decryption failed! Please check that you inputted a valid email in the config.")
     return decrypt
+
+def generate_password(length):
+    lowercase = string.ascii_lowercase
+    uppercase = string.ascii_uppercase
+    digits = string.digits
+    special = string.punctuation
+    special = special.replace("\'","")
+    combined = lowercase + uppercase + digits + special
+
+    rand_lower = random.choice(lowercase)
+    rand_upper = random.choice(uppercase)
+    rand_digit = random.choice(digits)
+    rand_special = random.choice(special)
+
+    password = rand_lower + rand_upper + rand_digit + rand_special
+    for i in range(length - 4):
+        password = password + random.choice(combined)
+        password = "".join(random.sample(password, len(password)))
+    return password
 
 def get_clipboard_program(path):
     clipboard = read_config_var(path, "clipboard-copy=")
@@ -76,7 +101,7 @@ def get_profile(gpg, key, profile, field, path, clipboard):
         value = master[profile]["password"]
     elif field == "username":
         value = master[profile]["username"]
-    os.system(clipboard+" "+value)
+    os.system(clipboard+" '"+value+"'")
 
 def quit_message():
     config_dir = config_path.parent
@@ -129,7 +154,7 @@ def main(args):
     elif args.new_master:
         create_new_encrypted_master(gpg, key, data_path)
     elif args.new_profile:
-        create_new_profile(gpg, key, args.new_profile, data_path)
+        create_new_profile(gpg, key, args.new_profile, args.password_length, data_path)
     elif args.remove_profile:
         remove_profile(gpg, key, args.remove_profile, data_path)
     else:
