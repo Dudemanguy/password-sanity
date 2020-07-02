@@ -1,6 +1,15 @@
 # password-sanity
 **p**ass**w**ord-**s**anity (pws) is a very simple commandline tool for managing passwords. Writing this was primarily motivated by the pure insanity that it would be to have good password practices without the help of software (hence the name) and the desire to avoid cloud crap or some complex GUI. The goal is to have safe, secure password storage for multiple accounts that is also easily retrievable with one command.
 
+## Installation
+You will need `python-gnupg` installed.
+
+```
+$ git clone https://github.com/Dudemanguy/password-sanity.git
+$ cd password-sanity
+# python setup.py install
+```
+
 ## Setup
 password-sanity relies on gpg for encryption and decryption. You will need to have generated your own gpg key pair with the private key in your keyring. There is no need to export the public key since the private key is what does the decryption it should only ever exist on one machine. Just run `gpg --full-gen-key` and follow the instructions. After you have a usable gpg key, you need to specify two variables in the `~/.config/pws/config` file (simply create it if it doesn't exist) like so:
 ```
@@ -34,7 +43,7 @@ Creating a brand new encrypted master:
 The structure of the decrypted master.asc file is simply JSON. You can create your own master.asc with whatever method you like as long as it is in valid JSON and you encrypt it with the same gpg key.
 
 ## TODO
-* Make this actually installable and executable
+* Write a password generator
 * Write some manpages
 
 ## License
