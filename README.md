@@ -23,22 +23,22 @@ The `gpg` field is simply the email field you specified for the gpg key created 
 One the first usage, pws will prompt you to create the encrypted master file. The location is `~/.local/share/pws/master.asc`.
 
 You can add a new account profile to the master file:  
-`python pws --new-profile profile-name`  
+`pws.py --new-profile profile-name`  
 
 The above will prompt you to input the username and password. Instead of typing one manually, it is better to use the password generator:  
-`python pws --new-profile profile-name --password-length 16` 
+`pws.py --new-profile profile-name --password-length 16` 
 
 Removing profiles:  
-`python pws --remove-profile profile-name`
+`pws.py --remove-profile profile-name`
 
 Retrieving a profile's password and storing it in the system's clipboard:  
-`python pws --get-profile profile-name`
+`pws.py --get-profile profile-name`
 
 Retrieving a profile's username and storing it in the system's clipboard:  
-`python pws --get-profile profile-name --field username`
+`pws.py --get-profile profile-name --field username`
 
 Creating a brand new encrypted master:  
-`python pws --new-master`
+`pws.py --new-master`
 
 
 ## Notes
