@@ -2,7 +2,11 @@
 **p**ass**w**ord-**s**anity (pws) is a very simple commandline tool for managing passwords. Writing this was primarily motivated by the pure insanity that it would be to have good password practices without the help of software (hence the name) and the desire to avoid cloud crap or some complex GUI. The goal is to have safe, secure password storage for multiple accounts that is also easily retrievable with one command.
 
 ## Installation
-You will need `python-gnupg` installed.
+You can simply install the versioned release through pip.  
+`# pip install password-sanity`
+
+#### Installing From Source
+Note that you don't have to actually install *pws*. You could just execute it directly.
 
 ```
 $ git clone https://github.com/Dudemanguy/password-sanity.git
