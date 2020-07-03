@@ -28,8 +28,7 @@ args = parser.parse_args()
 
 def copy_master(gpg, key, newkey, path, newpath):
     master = decrypt_master(gpg, key, path)
-    newgpg = gnupg.GPG()
-    newgpg.import_keys(key)
+    gpg.import_keys(newkey)
     encrypt_master(gpg, newkey, newpath, master)
 
 def create_new_encrypted_master(gpg, key, path):
