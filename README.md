@@ -1,5 +1,5 @@
 # password-sanity
-**p**ass**w**ord-**s**anity (pws) is a very simple commandline tool for managing passwords. Writing this was primarily motivated by the pure insanity that it would be to have good password practices without the help of software (hence the name) and the desire to avoid cloud crap or some complex GUI. The goal is to have safe, secure password storage for multiple accounts that is also easily retrievable with one command.
+**p**ass**w**ord-**s**anity (pws) is a very simple command line tool for managing passwords. Writing this was primarily motivated by the pure insanity that it would be to have good password practices without the help of software (hence the name) and the desire to avoid cloud crap or some complex GUI. The goal is to have safe, secure password storage for multiple accounts while still being easy and convienent to use.
 
 ## Installation
 You can simply install the versioned release through pip.  
@@ -61,7 +61,7 @@ Copying the master and encrypting it with a new gpg key:
 
 
 ## Notes
-The structure of the decrypted master.asc file is simply JSON. You can create your own master.asc with whatever method you like as long as it is in valid JSON and you encrypt it with the same gpg key.
+The structure of the decrypted master.asc file is simply JSON. The highest level key fields are the names of the profiles. In each profile field, there is a `username` and `password` key with the appropriate matching value. You can create your own master.asc with whatever method you like as long as it follows this structure. Just encrypt with the same gpg key you use with pws and save it as `~/.local/share/pws/master.asc`.
 
 Example:
 ```
