@@ -16,13 +16,13 @@ $ python setup.py sdist
 ```
 
 ## Setup
-password-sanity relies on gpg for encryption and decryption. You will need to have generated your own gpg key pair with the private key in your keyring. There is no need to export the public key since the private key is what does the decryption it should only ever exist on one machine. Just run `gpg --full-gen-key` and follow the instructions. After you have a usable gpg key, you need to specify two variables in the `~/.config/pws/config` file (simply create it if it doesn't exist) like so:
+password-sanity relies on gpg for encryption and decryption. You will need to have generated your own gpg key pair with the private key in your keyring. There is no need to export the public key since the private key is what does the decryption, and it should only ever exist on one machine. Just run `gpg --full-gen-key` and follow the instructions. After you have a usable gpg key, you need to specify two variables in the `~/.config/pws/config` file (simply create it if it doesn't exist) like so:
 ```
 gpg=user@domain.com
 clipboard-copy=prog --args
 ```
 
-The `gpg` field is simply the email field you specified for the gpg key created earlier. Since there is no reason to send this particular public key anywhere, it does not need to be a real email. The `clipboard-copy` field is the shell command used to copy a string to your system's clipboard. Since there is no sane way of having a cross-platform clipboard, this is the simplest way to handle it. On linux, you probably want `xclip` or `wl-copy` here.
+The `gpg` field is simply the email field you specified for the gpg key created earlier. Since there is no reason to send this particular public key anywhere, it does not need to be a real email. The `clipboard-copy` field is the shell command used to copy a string to your system's clipboard. Since there is no sane way of having a cross-platform clipboard, this is the simplest way to handle it. On GNU/Linux, you probably want `xclip` or `wl-copy` here.
 
 ## Usage
 On the first usage, pws will prompt you to create the encrypted master file. The location is `~/.local/share/pws/master.asc`.
@@ -54,7 +54,7 @@ Creating a brand new encrypted master:
 `pws --new-master`
 
 Copying the master and encrypting it with a new gpg key:  
-`pws --copy-master new@email.com path/to/new/file.asc`
+`pws --copy-master new_user@domain.com path/to/new/file.asc`
 
 
 ## Notes
