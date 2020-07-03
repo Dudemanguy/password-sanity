@@ -17,6 +17,7 @@ parser.add_argument("--field", choices=["password", "username"],
                     help="Select which the key field with --get-profile or --modify-profile.")
 parser.add_argument("--get-profile", help="Retrieve a field from a profile and store in clipboard. Defaults to password.")
 parser.add_argument("--install-completions", action="store_true", help="Install any available shell completions.")
+parser.add_argument("--list-profiles", action="store_true", help="List all saved profiles.")
 parser.add_argument("--modify-profile", help="Modify a field in a profile. Defaults to username.")
 parser.add_argument("--new-master", action="store_true", help="Create a new, encrypted master file.")
 parser.add_argument("--new-profile", help="Add a new account profile to the encrypted master file.")
@@ -129,6 +130,12 @@ def install_completions():
    if zsh_dir.is_dir():
       shutil.copy(str(zsh_completion), str(zsh_dir))
 
+def list_profiles(gpg, key, path):
+    decrypt = decrypt_master(gpg, key, path)
+    master = json.loads(str(decrypt))
+    for profile in sorted(master.keys()):
+        print(profile)
+
 def modify_profile(gpg, key, profile, field, length, path):
     decrypt = decrypt_master(gpg, key, path)
     master = json.loads(str(decrypt))
@@ -208,6 +215,8 @@ def main(args):
         if args.field == None:
             args.field = "password"
         get_profile(gpg, key, args.get_profile, args.field, data_path, clipboard)
+    elif args.list_profiles:
+        list_profiles(gpg, key, data_path)
     elif args.modify_profile:
         if args.field == None:
             args.field = "username"

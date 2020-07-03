@@ -33,6 +33,7 @@ _pws() {
 		--field
 		--get-profile
 		--install-completions
+		--list-profiles
 		--modify-profile
 		--new-master
 		--new-profile

@@ -41,6 +41,9 @@ Modify an existing profile:
 `pws --modify-profile profile-name`  
 You can pass `--password-length` and `--field` with `--modify-profile` as well.
 
+List all saved profiles:
+`pws --list-profiles`
+
 Removing profiles:  
 `pws --remove-profile profile-name`
 
