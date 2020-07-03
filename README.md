@@ -49,6 +49,9 @@ Retrieving a profile's username and storing it in the system's clipboard:
 Creating a brand new encrypted master:  
 `pws --new-master`
 
+Copying the master and encrypting it with a new gpg key:  
+`pws --copy-master new@email.com path/to/new/file.asc`
+
 
 ## Notes
 The structure of the decrypted master.asc file is simply JSON. You can create your own master.asc with whatever method you like as long as it is in valid JSON and you encrypt it with the same gpg key.

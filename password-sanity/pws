@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--copy-master", nargs=2, help="Export the master.asc to a new file using a different gpg key.")
 parser.add_argument("--field", choices=["password", "username"],
                     help="Select which the key field with --get-profile or --modify-profile.")
 parser.add_argument("--get-profile", help="Retrieve a field from a profile and store in clipboard. Defaults to password.")
@@ -20,6 +21,15 @@ parser.add_argument("--password-length", default=16, type=int,
                     help="Generate password of length x when creating or modifying a profile.")
 parser.add_argument("--remove-profile", help="Remove a stored profile from the encrypted master file.")
 args = parser.parse_args()
+
+def copy_master(gpg, key, newkey, path, newpath):
+    decrypt = decrypt_master(gpg, key, path)
+    master = json.loads(str(decrypt))
+    newgpg = gnupg.GPG()
+    newgpg.import_keys(key)
+    new_encrypt = gpg.encrypt(json.dumps(master).encode("utf-8"), newkey, output=str(newpath))
+    if not new_encrypt.ok:
+        sys.exit("Encryption failed! Please check that your newkey value is valid")
 
 def create_new_encrypted_master(gpg, key, path):
     if path.is_file():
@@ -172,7 +182,11 @@ def main(args):
             create_new_encrypted_master(gpg, key, data_path)
             sys.exit()
 
-    if args.get_profile:
+    if args.copy_master:
+        newkey = args.copy_master[0]
+        newpath = args.copy_master[1]
+        copy_master(gpg, key, newkey, data_path, newpath)
+    elif args.get_profile:
         if args.field == None:
             args.field = "password"
         get_profile(gpg, key, args.get_profile, args.field, data_path, clipboard)

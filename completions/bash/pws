@@ -5,6 +5,9 @@ _pws() {
     _init_completion -s || return
 
 	case $prev in
+		--copy-master)
+			return
+			;;
 		--field)
 			COMPREPLY=( $(compgen -W 'password username' -- $cur) )
 			return
@@ -26,7 +29,8 @@ _pws() {
 			;;
 	esac
 
-	opts="--field
+	opts="--copy-master
+		--field
 		--get-profile
 		--modify-profile
 		--new-master
