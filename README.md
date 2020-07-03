@@ -8,10 +8,13 @@ You can simply install the versioned release through pip.
 #### Installing From Source
 Note that you don't have to actually install *pws*. You could just execute it directly.
 
+If you have an existing installation, first remove it with `# pip uninstall password-sanity`.  
+
 ```
 $ git clone https://github.com/Dudemanguy/password-sanity.git
 $ cd password-sanity
-# python setup.py install
+$ python setup.py sdist
+# pip install dist/password-sanity-{version}.tar.gaz
 ```
 
 ## Setup
@@ -25,6 +28,9 @@ The `gpg` field is simply the email field you specified for the gpg key created 
 
 ## Usage
 On the first usage, pws will prompt you to create the encrypted master file. The location is `~/.local/share/pws/master.asc`.
+
+Install any available shell (bash/zsh) completions with:  
+`# pws --install-completions`
 
 You can add a new account profile to the master file:  
 `pws --new-profile profile-name`  

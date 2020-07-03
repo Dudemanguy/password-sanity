@@ -5,7 +5,9 @@ import gnupg
 import json
 import os
 import random
+import shutil
 import string
+import site
 import sys
 from pathlib import Path
 
@@ -14,6 +16,7 @@ parser.add_argument("--copy-master", nargs=2, help="Export the master.asc to a n
 parser.add_argument("--field", choices=["password", "username"],
                     help="Select which the key field with --get-profile or --modify-profile.")
 parser.add_argument("--get-profile", help="Retrieve a field from a profile and store in clipboard. Defaults to password.")
+parser.add_argument("--install-completions", action="store_true", help="Install any available shell completions.")
 parser.add_argument("--modify-profile", help="Modify a field in a profile. Defaults to username.")
 parser.add_argument("--new-master", action="store_true", help="Create a new, encrypted master file.")
 parser.add_argument("--new-profile", help="Add a new account profile to the encrypted master file.")
@@ -115,6 +118,17 @@ def get_profile(gpg, key, profile, field, path, clipboard):
         value = master[profile]["username"]
     os.system(clipboard+" '"+value+"'")
 
+def install_completions():
+   completions_dir = Path(site.getsitepackages()[0]) / "password-sanity" / "completions"
+   bash_completion = completions_dir / "bash" / "pws"
+   zsh_completion = completions_dir / "zsh" / "_pws"
+   bash_dir = Path(sys.prefix) / "share" / "bash-completion" / "completions"
+   zsh_dir = Path(sys.prefix) / "share" / "zsh" / "site-functions"
+   if bash_dir.is_dir():
+      shutil.copy(str(bash_completion), str(bash_dir))
+   if zsh_dir.is_dir():
+      shutil.copy(str(zsh_completion), str(zsh_dir))
+
 def modify_profile(gpg, key, profile, field, length, path):
     decrypt = decrypt_master(gpg, key, path)
     master = json.loads(str(decrypt))
@@ -167,6 +181,10 @@ def remove_profile(gpg, key, profile, path):
 def main(args):
     config_path = Path.home() / ".config" / "pws" / "config"
     data_path = Path.home() / ".local" / "share" / "pws" / "master.asc"
+
+    if args.install_completions:
+        install_completions()
+        sys.exit()
 
     if not config_path.is_file():
         sys.exit("Config file in ~/.config/pws/config does not yet exist. Please create it with the right variables.")

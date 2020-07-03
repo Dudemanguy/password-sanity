@@ -32,6 +32,7 @@ _pws() {
 	opts="--copy-master
 		--field
 		--get-profile
+		--install-completions
 		--modify-profile
 		--new-master
 		--new-profile

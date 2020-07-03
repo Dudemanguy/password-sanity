@@ -6,6 +6,7 @@ _pws() {
 		'--copy-master:1' \
 		'--field:1:'"$__fields" \
 		'--get-profile:1' \
+		'--install-completions' \
 		'--modify-profile:1' \
 		'--new-master' \
 		'--new-profile:1' \
