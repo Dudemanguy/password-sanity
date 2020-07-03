@@ -27,8 +27,7 @@ parser.add_argument("--remove-profile", help="Remove a stored profile from the e
 args = parser.parse_args()
 
 def copy_master(gpg, key, newkey, path, newpath):
-    decrypt = decrypt_master(gpg, key, path)
-    master = json.loads(str(decrypt))
+    master = decrypt_master(gpg, key, path)
     newgpg = gnupg.GPG()
     newgpg.import_keys(key)
     new_encrypt = gpg.encrypt(json.dumps(master).encode("utf-8"), newkey, output=str(newpath))
@@ -52,8 +51,7 @@ def create_new_encrypted_master(gpg, key, path):
         sys.exit("Encryption failed! Please check that you inputted a valid email in the config.")
 
 def create_new_profile(gpg, key, profile, length, path):
-    decrypt = decrypt_master(gpg, key, path)
-    master = json.loads(str(decrypt))
+    master = decrypt_master(gpg, key, path)
     if profile in master:
         print("The "+profile+" profile already exists in the master.asc file!")
         confirm = input("Are you absolutely sure you want to change its values? Type 'yes' to proceed.\n")
@@ -72,9 +70,11 @@ def create_new_profile(gpg, key, profile, length, path):
 def decrypt_master(gpg, key, path):
     stream = open(str(path), "rb")
     decrypt = gpg.decrypt_file(stream)
+    stream.close()
     if not decrypt.ok:
         sys.exit("Decryption failed! Please check that you inputted a valid email in the config.")
-    return decrypt
+    master = json.loads(str(decrypt))
+    return master
 
 def generate_password(length):
     lowercase = string.ascii_lowercase
@@ -108,8 +108,7 @@ def get_gpg_key(path):
     return key
 
 def get_profile(gpg, key, profile, field, path, clipboard):
-    decrypt = decrypt_master(gpg, key, path)
-    master = json.loads(str(decrypt))
+    master = decrypt_master(gpg, key, path)
     if not profile in master:
         sys.exit("The '"+profile+"' profile doesn't exist!")
     value = ""
@@ -131,14 +130,12 @@ def install_completions():
       shutil.copy(str(zsh_completion), str(zsh_dir))
 
 def list_profiles(gpg, key, path):
-    decrypt = decrypt_master(gpg, key, path)
-    master = json.loads(str(decrypt))
+    master = decrypt_master(gpg, key, path)
     for profile in sorted(master.keys()):
         print(profile)
 
 def modify_profile(gpg, key, profile, field, length, path):
-    decrypt = decrypt_master(gpg, key, path)
-    master = json.loads(str(decrypt))
+    master = decrypt_master(gpg, key, path)
     if not profile in master:
         sys.exit("The '"+profile+"' profile doesn't exist!")
     print("This will modify the '"+field+"' field in the '"+profile+"' profile.")
@@ -171,8 +168,7 @@ def read_config_var(path, var):
     return ""
 
 def remove_profile(gpg, key, profile, path):
-    decrypt = decrypt_master(gpg, key, path)
-    master = json.loads(str(decrypt))
+    master = decrypt_master(gpg, key, path)
     if profile in master:
         confirm = input("This will delete the '"+profile+"' profile from the encrypted master. Type 'yes' to proceed.\n")
         if confirm == "yes":
