@@ -56,6 +56,24 @@ Copying the master and encrypting it with a new gpg key:
 ## Notes
 The structure of the decrypted master.asc file is simply JSON. You can create your own master.asc with whatever method you like as long as it is in valid JSON and you encrypt it with the same gpg key.
 
+Example:
+```
+{
+	"profile1": {
+		"username": "user1",
+		"password": "pass1"
+	},
+	"profile2": {
+		"username": "user2",
+		"password": "pass2"
+	},
+	"profile3": {
+		"username": "user3",
+		"password": "pass3"
+	}
+}
+```
+
 ## TODO
 * Write some manpages
 
