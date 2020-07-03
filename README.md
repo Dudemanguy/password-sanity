@@ -8,8 +8,6 @@ You can simply install the versioned release through pip.
 #### Installing From Source
 Note that you don't have to actually install *pws*. You could just execute it directly.
 
-If you have an existing installation, first remove it with `# pip uninstall password-sanity`.  
-
 ```
 $ git clone https://github.com/Dudemanguy/password-sanity.git
 $ cd password-sanity
