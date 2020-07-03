@@ -11,13 +11,13 @@ from pathlib import Path
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--field", choices=["password", "username"],
-                    help="Select which the key field with --get-profile or --modify-profile.\n")
-parser.add_argument("--get-profile", help="Retrieve a field from a profile and store in clipboard. Defaults to password.\n")
+                    help="Select which the key field with --get-profile or --modify-profile.")
+parser.add_argument("--get-profile", help="Retrieve a field from a profile and store in clipboard. Defaults to password.")
 parser.add_argument("--modify-profile", help="Modify a field in a profile. Defaults to username.")
 parser.add_argument("--new-master", action="store_true", help="Create a new, encrypted master file.")
 parser.add_argument("--new-profile", help="Add a new account profile to the encrypted master file.")
 parser.add_argument("--password-length", default=16, type=int, 
-                    help="Generate password of length x when creating or modifying a profile.\n")
+                    help="Generate password of length x when creating or modifying a profile.")
 parser.add_argument("--remove-profile", help="Remove a stored profile from the encrypted master file.")
 args = parser.parse_args()
 
@@ -110,7 +110,7 @@ def modify_profile(gpg, key, profile, field, length, path):
     master = json.loads(str(decrypt))
     if not profile in master:
         sys.exit("The '"+profile+"' profile doesn't exist!")
-    print("This will modify the '"+field+"' field in the '"+profile+"' profile.\n")
+    print("This will modify the '"+field+"' field in the '"+profile+"' profile.")
     confirm = input("Type 'yes' to proceed.\n")
     if confirm == "yes":
         if field == "username":
