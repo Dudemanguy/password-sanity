@@ -5,6 +5,7 @@ _pws() {
 	_arguments \
 		'--field:1:'"$__fields" \
 		'--get-profile:1' \
+		'--modify-profile:1' \
 		'--new-master' \
 		'--new-profile:1' \
 		'--password-length:1' \

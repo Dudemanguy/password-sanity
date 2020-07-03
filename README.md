@@ -29,6 +29,10 @@ The above will autogenerate a random password of length 16 (guaranteed to have a
 `pws --new-profile profile-name --password-length 24`  
 If you want to manually type a password in, use `--password-length 0`.
 
+Modify an existing profile:  
+`pws --modify-profile profile-name`  
+You can pass `--password-length` and `--field` with `--modify-profile` as well.
+
 Removing profiles:  
 `pws --remove-profile profile-name`
 
@@ -46,7 +50,6 @@ Creating a brand new encrypted master:
 The structure of the decrypted master.asc file is simply JSON. You can create your own master.asc with whatever method you like as long as it is in valid JSON and you encrypt it with the same gpg key.
 
 ## TODO
-* Write autocompletions
 * Write some manpages
 
 ## License

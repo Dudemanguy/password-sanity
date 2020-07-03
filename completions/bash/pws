@@ -12,6 +12,9 @@ _pws() {
 		--get-profile)
 			return
 			;;
+		--modify-profile)
+			return
+			;;
 		--new-profile)
 			return
 			;;
@@ -25,6 +28,7 @@ _pws() {
 
 	opts="--field
 		--get-profile
+		--modify-profile
 		--new-master
 		--new-profile
 		--password-length

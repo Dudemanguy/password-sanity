@@ -10,13 +10,14 @@ import sys
 from pathlib import Path
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--field", choices=["password", "username"], default="password",
-                    help="Select which key field to obtain with --get-profile. Defaults to 'password'.\n")
-parser.add_argument("--get-profile", help="Retrieve account information from a profile and store in clipboard.\n")
+parser.add_argument("--field", choices=["password", "username"],
+                    help="Select which the key field with --get-profile or --modify-profile.\n")
+parser.add_argument("--get-profile", help="Retrieve a field from a profile and store in clipboard. Defaults to password.\n")
+parser.add_argument("--modify-profile", help="Modify a field in a profile. Defaults to username.")
 parser.add_argument("--new-master", action="store_true", help="Create a new, encrypted master file.")
 parser.add_argument("--new-profile", help="Add a new account profile to the encrypted master file.")
 parser.add_argument("--password-length", default=16, type=int, 
-                     help="Generate password of length x when creating a new profile.\n")
+                    help="Generate password of length x when creating or modifying a profile.\n")
 parser.add_argument("--remove-profile", help="Remove a stored profile from the encrypted master file.")
 args = parser.parse_args()
 
@@ -104,6 +105,27 @@ def get_profile(gpg, key, profile, field, path, clipboard):
         value = master[profile]["username"]
     os.system(clipboard+" '"+value+"'")
 
+def modify_profile(gpg, key, profile, field, length, path):
+    decrypt = decrypt_master(gpg, key, path)
+    master = json.loads(str(decrypt))
+    if not profile in master:
+        sys.exit("The '"+profile+"' profile doesn't exist!")
+    print("This will modify the '"+field+"' field in the '"+profile+"' profile.\n")
+    confirm = input("Type 'yes' to proceed.\n")
+    if confirm == "yes":
+        if field == "username":
+            username = input("Type in the new username.\n")
+            master[profile][field] = username
+        else:
+            if length == 0:
+                password = getpass.getpass(prompt="Input the password for this profile.\n")
+            else:
+                password = generate_password(length)
+            master[profile][field] = password
+    encrypt = gpg.encrypt(json.dumps(master).encode("utf-8"), key, output=str(path))
+    if not encrypt.ok:
+        sys.exit("Encryption failed! Please check that you inputted a valid email in the config.")
+
 def quit_message():
     config_dir = config_path.parent
     config_dir.mkdir(parents=True, exist_ok=True)
@@ -151,7 +173,13 @@ def main(args):
             sys.exit()
 
     if args.get_profile:
+        if args.field == None:
+            args.field = "password"
         get_profile(gpg, key, args.get_profile, args.field, data_path, clipboard)
+    elif args.modify_profile:
+        if args.field == None:
+            args.field = "username"
+        modify_profile(gpg, key, args.modify_profile, args.field, args.password_length, data_path)
     elif args.new_master:
         create_new_encrypted_master(gpg, key, data_path)
     elif args.new_profile:
