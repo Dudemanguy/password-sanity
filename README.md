@@ -2,7 +2,9 @@
 **p**ass**w**ord-**s**anity (pws) is a very simple command line tool for managing passwords. Writing this was primarily motivated by the pure insanity that it would be to have good password practices without the help of software (hence the name) and the desire to avoid cloud crap or some complex GUI. The goal is to have safe, secure password storage for multiple accounts while still being easy and convienent to use.
 
 ## Installation
-You can simply install the versioned release through pip.  
+There is an [AUR](https://aur.archlinux.org/packages/password-sanity-git/) package available for Arch users.
+
+You can also install the versioned release through pip.  
 `# pip install password-sanity`
 
 #### Installing From Source
