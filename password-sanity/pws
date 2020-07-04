@@ -26,6 +26,51 @@ parser.add_argument("--password-length", default=16, type=int,
 parser.add_argument("--remove-profile", help="Remove a stored profile from the encrypted master file.")
 args = parser.parse_args()
 
+def main(args):
+    config_path = Path.home() / ".config" / "pws" / "config"
+    data_path = Path.home() / ".local" / "share" / "pws" / "master.asc"
+
+    if args.install_completions:
+        install_completions()
+        sys.exit()
+
+    if not config_path.is_file():
+        sys.exit("Config file in ~/.config/pws/config does not yet exist. Please create it with the right variables.")
+
+    key = get_gpg_key(config_path)
+    clipboard = get_clipboard_program(config_path)
+    gpg = gnupg.GPG()
+    gpg.import_keys(key)
+
+    if not data_path.is_file():
+        confirm = input("Encrypted master file does not exist. Would you like to create it now? Type 'yes' to proceed.\n")
+        if confirm == 'yes':
+            create_new_encrypted_master(gpg, key, data_path)
+            sys.exit()
+
+    if args.copy_master:
+        newkey = args.copy_master[0]
+        newpath = Path(args.copy_master[1])
+        copy_master(gpg, key, newkey, data_path, newpath)
+    elif args.get_profile:
+        if args.field == None:
+            args.field = "password"
+        get_profile(gpg, key, args.get_profile, args.field, data_path, clipboard)
+    elif args.list_profiles:
+        list_profiles(gpg, key, data_path)
+    elif args.modify_profile:
+        if args.field == None:
+            args.field = "username"
+        modify_profile(gpg, key, args.modify_profile, args.field, args.password_length, data_path)
+    elif args.new_master:
+        create_new_encrypted_master(gpg, key, data_path)
+    elif args.new_profile:
+        create_new_profile(gpg, key, args.new_profile, args.password_length, data_path)
+    elif args.remove_profile:
+        remove_profile(gpg, key, args.remove_profile, data_path)
+    else:
+        parser.print_help()
+
 def copy_master(gpg, key, newkey, path, newpath):
     master = decrypt_master(gpg, key, path)
     gpg.import_keys(newkey)
@@ -186,51 +231,6 @@ def remove_profile(gpg, key, profile, path):
             sys.exit("Quitting.")
     else:
         sys.exit("The '"+profile+"' profile was not found.")
-
-def main(args):
-    config_path = Path.home() / ".config" / "pws" / "config"
-    data_path = Path.home() / ".local" / "share" / "pws" / "master.asc"
-
-    if args.install_completions:
-        install_completions()
-        sys.exit()
-
-    if not config_path.is_file():
-        sys.exit("Config file in ~/.config/pws/config does not yet exist. Please create it with the right variables.")
-
-    key = get_gpg_key(config_path)
-    clipboard = get_clipboard_program(config_path)
-    gpg = gnupg.GPG()
-    gpg.import_keys(key)
-
-    if not data_path.is_file():
-        confirm = input("Encrypted master file does not exist. Would you like to create it now? Type 'yes' to proceed.\n")
-        if confirm == 'yes':
-            create_new_encrypted_master(gpg, key, data_path)
-            sys.exit()
-
-    if args.copy_master:
-        newkey = args.copy_master[0]
-        newpath = Path(args.copy_master[1])
-        copy_master(gpg, key, newkey, data_path, newpath)
-    elif args.get_profile:
-        if args.field == None:
-            args.field = "password"
-        get_profile(gpg, key, args.get_profile, args.field, data_path, clipboard)
-    elif args.list_profiles:
-        list_profiles(gpg, key, data_path)
-    elif args.modify_profile:
-        if args.field == None:
-            args.field = "username"
-        modify_profile(gpg, key, args.modify_profile, args.field, args.password_length, data_path)
-    elif args.new_master:
-        create_new_encrypted_master(gpg, key, data_path)
-    elif args.new_profile:
-        create_new_profile(gpg, key, args.new_profile, args.password_length, data_path)
-    elif args.remove_profile:
-        remove_profile(gpg, key, args.remove_profile, data_path)
-    else:
-        parser.print_help()
 
 if __name__ == "__main__":
     main(args)
