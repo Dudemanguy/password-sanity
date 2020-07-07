@@ -4,6 +4,7 @@ import getpass
 import gnupg
 import json
 import os
+import pyperclip
 import random
 import shutil
 import string
@@ -38,7 +39,6 @@ def main(args):
         sys.exit("Config file in "+str(config_path)+" does not yet exist. Please create it with the right variables.")
 
     key = get_gpg_key(config_path)
-    clipboard = get_clipboard_program(config_path)
     gpg = gnupg.GPG()
     gpg.import_keys(key)
 
@@ -55,7 +55,7 @@ def main(args):
     elif args.get_profile:
         if args.field == None:
             args.field = "password"
-        get_profile(gpg, key, args.get_profile, args.field, data_path, clipboard)
+        get_profile(gpg, key, args.get_profile, args.field, data_path)
     elif args.list_profiles:
         list_profiles(gpg, key, data_path)
     elif args.modify_profile:
@@ -125,16 +125,6 @@ def encrypt_master(gpg, key, path, master):
         os.remove(str(path))
     os.rename(str(tmp_path), str(path))
 
-def escape_special_characters(string):
-    if sys.platform == "win32":
-        escape = "^"
-    else:
-        escape = "\\"
-    escaped_str = ""
-    for letter in string:
-        escaped_str = escaped_str+escape+letter
-    return escaped_str
-        
 def generate_password(length):
     lowercase = string.ascii_lowercase
     uppercase = string.ascii_uppercase
@@ -152,12 +142,6 @@ def generate_password(length):
         password = password + random.choice(combined)
         password = "".join(random.sample(password, len(password)))
     return password
-
-def get_clipboard_program(path):
-    clipboard = read_config_var(path, "clipboard-copy=")
-    if clipboard == "":
-        sys.exit("Clipboard program not found in config file! Must be a line formatted as 'clipboard-copy=prog --args'!")
-    return clipboard
 
 def get_config_path():
     if sys.platform == "win32":
@@ -177,7 +161,7 @@ def get_gpg_key(path):
         sys.exit("Valid gpg email address not found in config file! Must a line formatted as 'gpg=user@example.com'!")
     return key
 
-def get_profile(gpg, key, profile, field, path, clipboard):
+def get_profile(gpg, key, profile, field, path):
     master = decrypt_master(gpg, key, path)
     if not profile in master:
         sys.exit("The '"+profile+"' profile doesn't exist!")
@@ -188,9 +172,7 @@ def get_profile(gpg, key, profile, field, path, clipboard):
         value = profile
     elif field == "username":
         value = master[profile]["username"]
-    value = escape_special_characters(value)
-    clipboard = clipboard.replace("$value", value)
-    os.system(clipboard)
+    pyperclip.copy(value)
 
 def install_completions():
    completions_dir = Path(site.getsitepackages()[0]) / "password-sanity" / "completions"

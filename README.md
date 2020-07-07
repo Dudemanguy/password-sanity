@@ -7,8 +7,10 @@ There is an [AUR](https://aur.archlinux.org/packages/password-sanity-git/) packa
 You can also install the versioned release through pip.  
 `# pip install password-sanity`
 
+Note: python-pyperclip does not support wl-clipboard yet. To work around this, you can use [wl-clipboard-x11](https://github.com/brunelli/wl-clipboard-x11) for now.
+
 #### Installing From Source
-Note that you don't have to actually install *pws*. You could just execute it directly.
+Note that you don't have to actually install *pws*. You could just execute it directly. You will need python-gnupg and python-pyperclip.
 
 ```
 $ git clone https://github.com/Dudemanguy/password-sanity.git
@@ -21,10 +23,9 @@ $ python setup.py sdist
 password-sanity relies on gpg for encryption and decryption. You will need to have generated your own gpg key pair with the private key in your keyring. Just run `gpg --full-gen-key` and follow the instructions. After you have a usable gpg key, you need to specify two variables in the `~/.config/pws/config`  (`AppData\Roaming\pws\config` for Windows) file (simply create it if it doesn't exist) like so:
 ```
 gpg=user@domain.com
-clipboard-copy=prog --args $value
 ```
 
-The `gpg` field is simply the email field you specified for the gpg key created earlier. The `clipboard-copy` field is the shell command used to copy a string to your system's clipboard with the `$value` being the string in question. Since there is no sane way of having a cross-platform clipboard, this is the simplest way to handle it. On GNU/Linux, you probably want `xclip $value` or `wl-copy $value` here.
+The `gpg` field is simply the email field you specified for the gpg key created earlier.
 
 If you want to move to another machine, you'll need to export the private key. On the other machine, import the key and set the trust level to ultimate (needed if you want encryption/decryption to work). Be sure to move the key securely. The best practice is probably just copying it over with a usb drive and then nuking the usb with zeros after you're done. The master.asc file can be transported in any way you like since it is secure, and only you can decrypt it.
 
