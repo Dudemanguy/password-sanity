@@ -27,15 +27,15 @@ parser.add_argument("--remove-profile", help="Remove a stored profile from the e
 args = parser.parse_args()
 
 def main(args):
-    config_path = Path.home() / ".config" / "pws" / "config"
-    data_path = Path.home() / ".local" / "share" / "pws" / "master.asc"
+    config_path = get_config_path()
+    data_path = get_data_path()
 
     if args.install_completions:
         install_completions()
         sys.exit()
 
     if not config_path.is_file():
-        sys.exit("Config file in ~/.config/pws/config does not yet exist. Please create it with the right variables.")
+        sys.exit("Config file in "+str(config_path)+" does not yet exist. Please create it with the right variables.")
 
     key = get_gpg_key(config_path)
     clipboard = get_clipboard_program(config_path)
@@ -158,6 +158,18 @@ def get_clipboard_program(path):
     if clipboard == "":
         sys.exit("Clipboard program not found in config file! Must be a line formatted as 'clipboard-copy=prog --args'!")
     return clipboard
+
+def get_config_path():
+    if sys.platform == "win32":
+        return Path(os.environ.get("APPDATA")) /"pws" / "config"
+    else:
+        return Path.home() / ".config" / "pws" / "config"
+
+def get_data_path():
+    if sys.platform == "win32":
+        return Path(os.environ.get("APPDATA")) / "pws" / "master.asc"
+    else:
+        return Path.home() / ".local" / "share" / "pws" / "master.asc"
 
 def get_gpg_key(path):
     key = read_config_var(path, "gpg=")

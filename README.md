@@ -18,7 +18,7 @@ $ python setup.py sdist
 ```
 
 ## Setup
-password-sanity relies on gpg for encryption and decryption. You will need to have generated your own gpg key pair with the private key in your keyring. Just run `gpg --full-gen-key` and follow the instructions. After you have a usable gpg key, you need to specify two variables in the `~/.config/pws/config` file (simply create it if it doesn't exist) like so:
+password-sanity relies on gpg for encryption and decryption. You will need to have generated your own gpg key pair with the private key in your keyring. Just run `gpg --full-gen-key` and follow the instructions. After you have a usable gpg key, you need to specify two variables in the `~/.config/pws/config`  (`AppData\Roaming\pws\config` for Windows) file (simply create it if it doesn't exist) like so:
 ```
 gpg=user@domain.com
 clipboard-copy=prog --args $value
@@ -29,7 +29,7 @@ The `gpg` field is simply the email field you specified for the gpg key created 
 If you want to move to another machine, you'll need to export the private key. On the other machine, import the key and set the trust level to ultimate (needed if you want encryption/decryption to work). Be sure to move the key securely. The best practice is probably just copying it over with a usb drive and then nuking the usb with zeros after you're done. The master.asc file can be transported in any way you like since it is secure, and only you can decrypt it.
 
 ## Usage
-On the first usage, pws will prompt you to create the encrypted master file. The location is `~/.local/share/pws/master.asc`.
+On the first usage, pws will prompt you to create the encrypted master file. The location is `~/.local/share/pws/master.asc` (`AppData\Roaming\pws\master.asc` on Windows).
 
 Install any available shell (bash/zsh) completions with:  
 `# pws --install-completions`
