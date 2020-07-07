@@ -167,7 +167,9 @@ def get_profile(gpg, key, profile, field, path, clipboard):
         value = profile
     elif field == "username":
         value = master[profile]["username"]
-    os.system(clipboard+" '"+value+"'")
+    value = "'"+value+"'"
+    clipboard = clipboard.replace("$value", value)
+    os.system(clipboard)
 
 def install_completions():
    completions_dir = Path(site.getsitepackages()[0]) / "password-sanity" / "completions"
