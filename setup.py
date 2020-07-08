@@ -11,7 +11,7 @@ def main():
         author_email='random342@airmail.cc',
         url='https://github.com/Dudemanguy/password-sanity',
         packages=['password-sanity'],
-        install_requires=['python-gnupg', 'python-pyperclip'],
+        install_requires=['python-gnupg', 'pyperclip'],
         scripts=['password-sanity/pws',],
         package_data={'password-sanity': ['completions/bash/pws', 'completions/zsh/_pws']}
     )
