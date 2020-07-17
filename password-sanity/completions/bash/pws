@@ -21,7 +21,13 @@ _pws() {
 		--new-profile)
 			return
 			;;
+		--password-blacklist)
+			return
+			;;
 		--password-length)
+			return
+			;;
+		--password-whitelist)
 			return
 			;;
 		--remove-profile)
@@ -37,7 +43,9 @@ _pws() {
 		--modify-profile
 		--new-master
 		--new-profile
+		--password-blacklist
 		--password-length
+		--password-whitelist
 		--remove-profile"
 	COMPREPLY=( $(compgen -W "${opts[*]}" -- $cur) )
 	return

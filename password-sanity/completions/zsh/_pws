@@ -11,7 +11,9 @@ _pws() {
 		'--modify-profile:1' \
 		'--new-master' \
 		'--new-profile:1' \
+		'--password-blacklist:1' \
 		'--password-length:1' \
+		'--password-whitelist:1' \
 		'--remove-profile:1'
 }
 

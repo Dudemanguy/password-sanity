@@ -22,8 +22,10 @@ parser.add_argument("--list-profiles", action="store_true", help="List all saved
 parser.add_argument("--modify-profile", help="Modify a field in a profile. Defaults to username.")
 parser.add_argument("--new-master", action="store_true", help="Create a new, encrypted master file.")
 parser.add_argument("--new-profile", help="Add a new account profile to the encrypted master file.")
+parser.add_argument("--password-blacklist", default="", help="Blacklist characters when generating a password.")
 parser.add_argument("--password-length", default=16, type=int, 
                     help="Generate password of length x when creating or modifying a profile.")
+parser.add_argument("--password-whitelist", default=string.printable, help="Whitelist characters when generating a password.")
 parser.add_argument("--remove-profile", help="Remove a stored profile from the encrypted master file.")
 args = parser.parse_args()
 
@@ -61,11 +63,13 @@ def main(args):
     elif args.modify_profile:
         if args.field == None:
             args.field = "username"
-        modify_profile(gpg, key, args.modify_profile, args.field, args.password_length, data_path)
+        modify_profile(gpg, key, args.modify_profile, args.field, args.password_length,
+                       args.password_blacklist, args.password_whitelist, data_path)
     elif args.new_master:
         create_new_encrypted_master(gpg, key, data_path)
     elif args.new_profile:
-        create_new_profile(gpg, key, args.new_profile, args.password_length, data_path)
+        create_new_profile(gpg, key, args.new_profile, args.password_length,
+                           args.password_blacklist, args.password_whitelist, data_path)
     elif args.remove_profile:
         remove_profile(gpg, key, args.remove_profile, data_path)
     else:
@@ -92,7 +96,7 @@ def create_new_encrypted_master(gpg, key, path):
     if not encrypt.ok:
         sys.exit("Encryption failed! Please check that your gpg key is correct, and you have write permissions.")
 
-def create_new_profile(gpg, key, profile, length, path):
+def create_new_profile(gpg, key, profile, length, blacklist, whitelist, path):
     master = decrypt_master(gpg, key, path)
     if profile in master:
         print("The "+profile+" profile already exists in the master.asc file!")
@@ -103,7 +107,7 @@ def create_new_profile(gpg, key, profile, length, path):
     if length == 0:
         password = getpass.getpass(prompt="Input the password for this profile.\n")
     else:
-        password = generate_password(length)
+        password = generate_password(length, blacklist, whitelist)
     master[profile] = {"username" : username, "password": password}
     encrypt_master(gpg, key, path, master)
 
@@ -125,11 +129,26 @@ def encrypt_master(gpg, key, path, master):
         os.remove(str(path))
     os.rename(str(tmp_path), str(path))
 
-def generate_password(length):
-    lowercase = string.ascii_lowercase
-    uppercase = string.ascii_uppercase
-    digits = string.digits
-    special = string.punctuation
+def filter_lists(characters, blacklist, whitelist):
+    for char in characters:
+        if char in blacklist:
+            characters = characters.replace(char, "")
+        if not char in whitelist:
+            characters = characters.replace(char, "")
+    return characters
+
+def generate_password(length, blacklist, whitelist):
+    # white list takes precedence over blacklist
+    for char in whitelist:
+        if char in blacklist:
+            blacklist = blacklist.replace(char, "")
+
+    white_lower, white_upper, white_digits, white_special = split_whitelist(whitelist)
+
+    lowercase = filter_lists(string.ascii_lowercase, blacklist, white_lower)
+    uppercase = filter_lists(string.ascii_uppercase, blacklist, white_upper)
+    digits = filter_lists(string.digits, blacklist, white_digits)
+    special = filter_lists(string.punctuation, blacklist, white_special)
     combined = lowercase + uppercase + digits + special
 
     rand_lower = random.choice(lowercase)
@@ -190,7 +209,7 @@ def list_profiles(gpg, key, path):
     for profile in sorted(master.keys()):
         print(profile)
 
-def modify_profile(gpg, key, profile, field, length, path):
+def modify_profile(gpg, key, profile, field, length, blacklist, whitelist, path):
     master = decrypt_master(gpg, key, path)
     if not profile in master:
         sys.exit("The '"+profile+"' profile doesn't exist!")
@@ -201,7 +220,7 @@ def modify_profile(gpg, key, profile, field, length, path):
             if length == 0:
                 password = getpass.getpass(prompt="Input the password for this profile.\n")
             else:
-                password = generate_password(length)
+                password = generate_password(length, blacklist, whitelist)
             master[profile][field] = password
         elif field == "profile-name":
             profile_name = input("Type in the new profile-name.\n")
@@ -236,6 +255,36 @@ def remove_profile(gpg, key, profile, path):
             sys.exit("Quitting.")
     else:
         sys.exit("The '"+profile+"' profile was not found.")
+
+def split_whitelist(whitelist):
+    white_lower = ""
+    white_upper = ""
+    white_digits = ""
+    white_special = ""
+
+    if whitelist == string.printable:
+        return string.ascii_lowercase, string.ascii_uppercase, string.digits, string.punctuation
+    else:
+        for char in whitelist:
+            if char in string.ascii_lowercase:
+                white_lower += char
+            elif char in string.ascii_uppercase:
+                white_upper += char
+            elif char in string.digits:
+                white_digits += char
+            elif char in string.punctuation:
+                white_special += char
+
+    if white_lower == "":
+        white_lower = string.ascii_lowercase
+    if white_upper == "":
+        white_upper = string.ascii_uppercase
+    if white_digits == "":
+        white_digits = string.digits
+    if white_special == "":
+        white_special = string.punctuation
+
+    return white_lower, white_upper, white_digits, white_special
 
 if __name__ == "__main__":
     main(args)
