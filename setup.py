@@ -5,7 +5,7 @@ from setuptools import setup
 def main():
     setup(
         name='password-sanity',
-        version='0.41',
+        version='0.50',
         description='A simple, python program for securely managing passwords through the command line.',
         author='Dudemanguy',
         author_email='random342@airmail.cc',
