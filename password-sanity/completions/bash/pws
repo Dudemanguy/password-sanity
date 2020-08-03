@@ -9,7 +9,7 @@ _pws() {
 			return
 			;;
 		--field)
-			COMPREPLY=( $(compgen -W 'password username' -- $cur) )
+			COMPREPLY=( $(compgen -W 'password profile-name username' -- $cur) )
 			return
 			;;
 		--get-profile)

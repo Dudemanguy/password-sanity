@@ -1,7 +1,7 @@
 #compdef pws
 
 _pws() {
-	local __fields="(password username)"
+	local __fields="(password profile-name username)"
 	_arguments \
 		'--copy-master:1' \
 		'--field:1:'"$__fields" \
