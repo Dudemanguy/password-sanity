@@ -7,8 +7,6 @@ There is an [AUR](https://aur.archlinux.org/packages/password-sanity-git/) packa
 You can also install the versioned release through pip.  
 `# pip install password-sanity`
 
-Note: python-pyperclip does not support wl-clipboard yet. To work around this, you can use [wl-clipboard-x11](https://github.com/brunelli/wl-clipboard-x11) for now.
-
 #### Installing From Source
 Note that you don't have to actually install *pws*. You could just execute it directly. You will need python-gnupg and python-pyperclip.
 
